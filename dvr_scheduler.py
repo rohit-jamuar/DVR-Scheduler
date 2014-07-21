@@ -78,6 +78,9 @@ class Scheduler:
                     return False
             return False
 
+        else:
+            return False
+
     def add(self, schedule_input):
         '''
         This function tries to add {date, time-slot, channel} (provided as 'l') to the
