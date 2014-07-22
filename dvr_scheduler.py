@@ -166,8 +166,6 @@ class Scheduler:
         if processed_input:
             date = processed_input[0]
             time = processed_input[1]
-            self.recordings_on.add(date)
-            
             active_channels = []
 
             for tuner in self.tuners:
@@ -197,8 +195,6 @@ class Scheduler:
             end = processed_input[1]
             date = processed_input[2]
             channel = processed_input[3]
-            
-            self.recordings_on.add(date)
 
             for tuner in self.tuners:
                 if date in self.data[tuner]:
