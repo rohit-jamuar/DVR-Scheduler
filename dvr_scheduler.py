@@ -30,24 +30,27 @@ class Scheduler:
                 date_object = datetime.strptime(time_var, '%I:%M%p')
                 return (date_object.hour * 100) + date_object.minute
             elif convert == 'from':
-                hrs = time_var / 100
-                mins = str(time_var % 100)
-                is_pm = False
-                
-                if hrs > 12:
-                    hrs -= 12
-                    is_pm = True
-                hrs = str(hrs)
-                if len(hrs) == 1:
-                    hrs = '0' + hrs
-                        
-                if len(mins) == 1:
-                    mins = '0' + mins
-                
-                if is_pm:
-                    return hrs+':'+mins+'pm'
+                if type(time_var) == int:
+                    hrs = time_var / 100
+                    mins = str(time_var % 100)
+                    is_pm = False
+                    
+                    if hrs > 12:
+                        hrs -= 12
+                        is_pm = True
+                    hrs = str(hrs)
+                    if len(hrs) == 1:
+                        hrs = '0' + hrs
+                            
+                    if len(mins) == 1:
+                        mins = '0' + mins
+                    
+                    if is_pm:
+                        return hrs+':'+mins+'pm'
+                    else:
+                        return hrs+':'+mins+'am'
                 else:
-                    return hrs+':'+mins+'am'
+                    raise ValueError
             else:
                 return False
         except ValueError:
