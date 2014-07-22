@@ -14,9 +14,10 @@ class Scheduler:
         '''
         self.tuners = [ 't'+str(i+1) for i in range(k) ]
         self.data = { elem : {} for elem in self.tuners }
+        self.recordings_on = set()
 
     @staticmethod
-    def __get_time(time_str):
+    def __get_time(time_var, convert):
         '''
         Returns the integral representation of time passed as string. If the passed
         argument is an invalid representation, False is returned.
@@ -24,9 +25,31 @@ class Scheduler:
         The argument has to be passed in this format - h:mm[am|pm|AM|PM]
         '''
         try:
-            time_str = time_str.upper()
-            date_object = datetime.strptime(time_str, '%I:%M%p')
-            return (date_object.hour * 100) + date_object.minute
+            if convert == 'to':
+                time_var = time_var.upper()
+                date_object = datetime.strptime(time_var, '%I:%M%p')
+                return (date_object.hour * 100) + date_object.minute
+            elif convert == 'from':
+                hrs = time_var / 100
+                mins = str(time_var % 100)
+                is_pm = False
+                
+                if hrs > 12:
+                    hrs -= 12
+                    is_pm = True
+                hrs = str(hrs)
+                if len(hrs) == 1:
+                    hrs = '0' + hrs
+                        
+                if len(mins) == 1:
+                    mins = '0' + mins
+                
+                if is_pm:
+                    return hrs+':'+mins+'pm'
+                else:
+                    return hrs+':'+mins+'am'
+            else:
+                return False
         except ValueError:
             return False
 
@@ -55,27 +78,23 @@ class Scheduler:
                 if '-' in slot:
                     start, end = slot.split('-')
                 
-                    start = Scheduler.__get_time(start)
-                    end = Scheduler.__get_time(end)
+                    start = Scheduler.__get_time(start, 'to')
+                    end = Scheduler.__get_time(end, 'to')
                     date = Scheduler.__get_datetime_obj(date)
 
                     if start and end and date and start < end:
                         return (start, end, date, channel)
-                    else:
-                        return False
             return False
         
         elif action == 'get':
             if schedule_input.count(' ') == 1:
-                date, time_str = schedule_input.split()
+                date, time_var = schedule_input.split()
                 
                 date = Scheduler.__get_datetime_obj(date)
-                time = Scheduler.__get_time(time_str)
+                time = Scheduler.__get_time(time_var, 'to')
 
                 if date and time:
                     return (date, time)
-                else:
-                    return False
             return False
 
         else:
@@ -99,6 +118,7 @@ class Scheduler:
             channel = processed_input[3]
 
             data_to_insert = {(start, end) : channel}
+            self.recordings_on.add(date)
             
             for tuner in self.tuners:
                 if date in self.data[tuner]:
@@ -143,6 +163,8 @@ class Scheduler:
         if processed_input:
             date = processed_input[0]
             time = processed_input[1]
+            self.recordings_on.add(date)
+            
             active_channels = []
 
             for tuner in self.tuners:
@@ -172,6 +194,8 @@ class Scheduler:
             end = processed_input[1]
             date = processed_input[2]
             channel = processed_input[3]
+            
+            self.recordings_on.add(date)
 
             for tuner in self.tuners:
                 if date in self.data[tuner]:
@@ -183,7 +207,10 @@ class Scheduler:
                             for elem in temp[index].values():
                                 if elem ==  channel:
                                     temp = temp[:index] + temp[index+1:]
-                                    self.data[tuner][date] = temp
+                                    if not temp:
+                                        del self.data[tuner][date]
+                                    else:
+                                        self.data[tuner][date] = temp
                                     print "Removed '%s' !" % schedule_input
                                     return
             print "Could not find '%s' !" % schedule_input
@@ -191,6 +218,26 @@ class Scheduler:
             print "The time-slot has to be entered in H:MM[AM|PM] format",
             print "and / or the date has to be entered in H:MM[am|pm] !"
 
+    def view_scheduled(self):
+        '''
+        Shows all the scheduled recordings on STDOUT
+        '''
+        for date in sorted(self.recordings_on):
+            sched = []
+            for tuner in self.tuners:
+                if date in self.data[tuner]:
+                    for item in self.data[tuner][date]:
+                        sched.append(item)
+            if sched:
+                sched.sort(key = lambda x : x.keys()[0][0])
+                current_date = date.date()
+                print "\nDate : %d/%d/%d" \
+                % (current_date.month, current_date.day, current_date.year)
+                
+                for elem in sched:
+                    s_0 = Scheduler.__get_time(elem.keys()[0][0], 'from')
+                    e_0 = Scheduler.__get_time(elem.keys()[0][1], 'from')
+                    print "From %s to %s -- %s" % (s_0, e_0, elem.values())
 
 if __name__ == '__main__':
         
@@ -200,7 +247,8 @@ if __name__ == '__main__':
         
         print "\nEnter -"
         print "S : to enter a schedule\nQ : to query using time"
-        print "R : to remove a schedule\nX : to quit\n"
+        print "R : to remove a schedule\nV : to view entire schedule"
+        print "X : to quit\n"
         
         while True:
             USER_INPUT = raw_input("\nCommand - ")
@@ -215,3 +263,5 @@ if __name__ == '__main__':
             elif USER_INPUT in ['R', 'r']:
                 SCHEDULE_R = raw_input("Enter schedule to remove: ")
                 SCHED.remove(SCHEDULE_R.strip())
+            elif USER_INPUT in ['v', 'V']:
+                SCHED.view_scheduled()
