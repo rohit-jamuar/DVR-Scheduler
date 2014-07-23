@@ -153,8 +153,8 @@ class Scheduler:
             print "All the tuners are busy! This request cannot be completed."
         
         else:
-            print "The time-slot has to be entered in H:MM[AM|PM] format",
-            print "and / or the date has to be entered in H:MM[am|pm] !"
+            print "The time-slot has to be entered in HH:MM[AM|PM] format",
+            print "and / or the date has to be entered in mm/dd/yyyy !"
 
     def get(self, schedule_input):
         '''
@@ -181,8 +181,8 @@ class Scheduler:
             else:
                 print "No channel has been scheduled at the time specified !"
         else:
-            print "The time-slot has to be entered in H:MM[AM|PM] format",
-            print "and / or the date has to be entered in H:MM[am|pm] !"
+            print "The time-slot has to be entered in HH:MM[AM|PM] format",
+            print "and / or the date has to be entered in mm/dd/yyyy!"
 
     def remove(self, schedule_input):
         '''
@@ -214,8 +214,8 @@ class Scheduler:
                                     return
             print "Could not find '%s' !" % schedule_input
         else:
-            print "The time-slot has to be entered in H:MM[AM|PM] format",
-            print "and / or the date has to be entered in H:MM[am|pm] !"
+            print "The time-slot has to be entered in HH:MM[AM|PM] format",
+            print "and / or the date has to be entered in mm/dd/yyyy !"
 
     def view_scheduled(self):
         '''
