@@ -19,10 +19,14 @@ class Scheduler:
     @staticmethod
     def __get_time(time_var, convert):
         '''
+        If convert == 'to':
         Returns the integral representation of time passed as string. If the passed
         argument is an invalid representation, False is returned.
-
-        The argument has to be passed in this format - h:mm[am|pm|AM|PM]
+        The argument has to be passed in this format - hh:mm[am|pm|AM|PM]
+        
+        If convert == 'from':
+        Returns time as string in the following format hh:mm[am|pm]
+        If the passed argument ('time_var') is improper, False is returned.
         '''
         try:
             if convert == 'to':
@@ -46,13 +50,12 @@ class Scheduler:
                         mins = '0' + mins
                     
                     if is_pm:
-                        return hrs+':'+mins+'pm'
+                        return hrs+":"+mins+'pm'
                     else:
-                        return hrs+':'+mins+'am'
+                        return hrs+":"+mins+'am'
                 else:
                     raise ValueError
-            else:
-                return False
+            return False
         except ValueError:
             return False
 
@@ -98,10 +101,7 @@ class Scheduler:
 
                 if date and time:
                     return (date, time)
-            return False
-
-        else:
-            return False
+        return False
 
     def add(self, schedule_input):
         '''
