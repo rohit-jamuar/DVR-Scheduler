@@ -42,10 +42,10 @@ class Scheduler:
                     if hrs > 12:
                         hrs -= 12
                         is_pm = True
+                    
                     hrs = str(hrs)
                     if len(hrs) == 1:
                         hrs = '0' + hrs
-                            
                     if len(mins) == 1:
                         mins = '0' + mins
                     
