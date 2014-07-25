@@ -8,6 +8,9 @@ A terminal based scheduler for programming a DVR. It allows one to choose number
   * **remove( sched )** - To remove an existing `sched` from the scheduler. It checks if `sched` is scheduled to be recorded by one of the tuners. If so, it removes the `sched` from its internal data-store. Variable `sched` needs to have the following format `mm/dd/yyyy hh:mm[am|pm]-hh:mm[am|pm] channel_number`.
   * **view_scheduled()** - To view all the channels which have been scheduled by the user. The method prints all the scheduled channels in a chronological manner to **STDOUT**.
   
-##Requirements:
+###Run: 
+`python dvr_scheduler.py`
+
+###Requirements:
   * Python 2.7
 
